@@ -1,4 +1,4 @@
-module Lib.HTML (openTag, closeTag,element,Node  ) where
+module Lib.HTML (openTag, closeTag,element,Node(Element, Text)  ) where
 import Text.ParserCombinators.Parsec
 
 
@@ -30,4 +30,4 @@ element = do
 
 
 type Attribute = (String,String)
-data Node = Element String [Attribute] [Node] | Text String deriving (Show)
+data Node = Element String [Attribute] [Node] | Text String deriving (Show, Eq)
