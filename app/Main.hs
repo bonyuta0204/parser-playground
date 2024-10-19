@@ -17,7 +17,9 @@ cell :: GenParser Char st String
 cell = many (noneOf "\n,")
 
 eol :: GenParser Char st Char
-eol = char '\n'
+eol = do
+  char '\n'
+  char '\r' <|> return '\n'
 
 parseCSV :: String -> Either ParseError [[String]]
 parseCSV = parse csvFile "(unknown)"
