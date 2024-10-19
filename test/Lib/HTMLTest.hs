@@ -5,11 +5,26 @@ import Lib.HTML
 import Text.ParserCombinators.Parsec
 
 
+testOpenTag :: Test
 testOpenTag = TestCase (do
-    let input = "<body>"
-    let result = parse (openTag >> eof) "" input
-    assertEqual "parse openTag" (Right ()) result
+    let input = "<body id=\"test\">"
+    let result = parse openTag "" input
+    let exepected = Right ("body",[("id", "test")])
+    assertEqual "parse openTag"  exepected result
     )
+
+testQuotedText :: Test
+testQuotedText = TestCase (do
+    let input = "\"abc\""
+    let result = parse quotedText "" input
+    assertEqual "parse quotedText" (Right "abc") result
+    )
+
+testQuotedTextWithEscape :: Test
+testQuotedTextWithEscape = TestCase (do
+    let input = "\"\\\"\""
+    let result = parse quotedText "" input
+    assertEqual "parse quotedText" (Right "\"") result)
 
 
 testElement1 :: Test
@@ -27,4 +42,4 @@ testNested = TestCase (do
     assertEqual "Parsing nested document" expected result)
 
 htmlTests :: Test
-htmlTests = TestList [testOpenTag,testElement1,testNested]
+htmlTests = TestList [testOpenTag,testQuotedText,testQuotedTextWithEscape,testElement1,testNested]

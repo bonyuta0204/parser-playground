@@ -1,13 +1,33 @@
-module Lib.HTML (openTag, closeTag,element,html,Node(Element, Text)  ) where
+module Lib.HTML (openTag, closeTag,element,quotedText,html,Node(Element, Text)  ) where
 import Text.ParserCombinators.Parsec
 
 
 openTag :: GenParser Char st (String, [Attribute])
 openTag = do
     char '<'
-    content <- many (noneOf "<>")
+    tagName <- many letter
+    attributes <- try (char ' ' >> sepBy attribute (char ' ')) <|> (return [])
     char '>'
-    return (content,[])
+    return (tagName,attributes)
+
+attribute :: GenParser Char st Attribute
+attribute = do
+    key <- many letter
+    char '='
+    value <- quotedText
+    return (key, value)
+
+quotedText :: GenParser Char st String
+quotedText = do
+    char '"'
+    text <- many (escapeChar <|> noneOf "\"\\")
+    char '"'
+    return text
+
+escapeChar :: GenParser Char st Char
+escapeChar = do
+    try (string "\\\"" >> return '"')
+
 
 closeTag :: GenParser Char st String
 closeTag = do
