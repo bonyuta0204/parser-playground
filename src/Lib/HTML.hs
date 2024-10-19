@@ -2,12 +2,12 @@ module Lib.HTML (openTag, closeTag,element,Node  ) where
 import Text.ParserCombinators.Parsec
 
 
-openTag :: GenParser Char st String
+openTag :: GenParser Char st (String, [Attribute])
 openTag = do
     char '<'
     content <- many (noneOf "<>")
     char '>'
-    return content
+    return (content,[])
 
 closeTag :: GenParser Char st String
 closeTag = do
@@ -23,10 +23,11 @@ textNode = do
 
 element :: GenParser Char st Node
 element = do
-    tag <- openTag
+    (tag, attributes) <- openTag
     nodes <- many (try element <|> textNode)
     closeTag
-    return (Element tag nodes)
+    return (Element tag attributes nodes)
 
 
-data Node = Element String [Node] | Text String deriving (Show)
+type Attribute = (String,String)
+data Node = Element String [Attribute] [Node] | Text String deriving (Show)
