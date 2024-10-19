@@ -14,12 +14,10 @@ line :: GenParser Char st [String]
 line = sepBy cell (char ',')
 
 cell :: GenParser Char st String 
-cell = many (noneOf "\n,")
+cell = many (noneOf "\n\r,")
 
-eol :: GenParser Char st Char
-eol = do
-  char '\n'
-  char '\r' <|> return '\n'
+eol :: GenParser Char st String
+eol = try (string "\r\n") <|> try (string "\n\r") <|> string "\r" <|> string "\n" <?> "Could not find EOL"
 
 parseCSV :: String -> Either ParseError [[String]]
 parseCSV = parse csvFile "(unknown)"
