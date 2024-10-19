@@ -26,6 +26,8 @@ source-repository head
 library
   exposed-modules:
       Lib
+      Lib.CSV
+      Lib.HTML
   other-modules:
       Paths_parser_playground
   autogen-modules:

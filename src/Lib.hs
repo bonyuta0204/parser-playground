@@ -1,6 +1,4 @@
-module Lib
-    ( someFunc
-    ) where
+module Lib (module CSV, module HTML) where
 
-someFunc :: IO ()
-someFunc = putStrLn "someFunc"
+import Lib.CSV as CSV ( csvFile )
+import Lib.HTML as HTML (html)
