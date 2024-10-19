@@ -6,7 +6,7 @@ openTag :: GenParser Char st (String, [Attribute])
 openTag = do
     char '<'
     tagName <- many letter
-    attributes <- try (char ' ' >> sepBy attribute (char ' ')) <|> (return [])
+    attributes <- try (char ' ' >> sepBy attribute (char ' ')) <|> return []
     char '>'
     return (tagName,attributes)
 

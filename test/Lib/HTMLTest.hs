@@ -41,5 +41,13 @@ testNested = TestCase (do
     let result = parse element "" input
     assertEqual "Parsing nested document" expected result)
 
+testNested2 :: Test
+testNested2 = TestCase (do
+    let input = "<div><div></div></div>"
+    let expected = Right (Element "div" [] [Element "div" [] []])
+    let result = parse element "" input
+    assertEqual "Parsing nested document" expected result)
+
+
 htmlTests :: Test
-htmlTests = TestList [testOpenTag,testQuotedText,testQuotedTextWithEscape,testElement1,testNested]
+htmlTests = TestList [testOpenTag,testQuotedText,testQuotedTextWithEscape,testElement1,testNested,testNested2]
