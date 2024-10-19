@@ -14,6 +14,26 @@ testOpenTag =
         assertEqual "parse openTag" exepected result
     )
 
+testOpenTagMultiLine :: Test
+testOpenTagMultiLine =
+  TestCase
+    ( do
+        let input = "<body\n id=\"test\"\n>"
+        let result = parse openTag "" input
+        let exepected = Right ("body", [("id", "test")])
+        assertEqual "parse openTag" exepected result
+    )
+
+testOpenTagMultiLine2 :: Test
+testOpenTagMultiLine2 =
+  TestCase
+    ( do
+        let input = "<script\n    type=\"text/javascript\"\n    async=\"\"\n    src=\"//test.js\"\n  ></script>"
+        let result = parse openTag "" input
+        let exepected = Right ("script",[("type","text/javascript"),("async",""),("src","//test.js")])
+        assertEqual "parse openTag" exepected result
+    )
+
 testQuotedText :: Test
 testQuotedText =
   TestCase
@@ -92,4 +112,4 @@ testWithComment =
     )
 
 htmlTests :: Test
-htmlTests = TestList [testOpenTag, testQuotedText, testQuotedTextWithEscape, testElement1, testNested, testComment, testWithComment, testSingleTag, testNested2]
+htmlTests = TestList [testOpenTag, testOpenTagMultiLine, testOpenTagMultiLine2, testQuotedText, testQuotedTextWithEscape, testElement1, testNested, testComment, testWithComment, testSingleTag, testNested2]

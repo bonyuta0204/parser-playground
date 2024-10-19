@@ -1,22 +1,28 @@
 module Lib.HTML (openTag, closeTag, element, quotedText, html, comment, Node (Element, Text)) where
 
-import Text.ParserCombinators.Parsec
+import Debug.Trace (trace)
 import Text.Parsec (parserTrace)
-import Debug.Trace (trace, traceId)
+import Text.ParserCombinators.Parsec
 
 openTag :: GenParser Char st (String, [Attribute])
 openTag = do
   char '<'
   tagName <- many1 letter
-  attributes <- try (char ' ' >> sepBy attribute (char ' ')) <|> return []
+  spaces
+  parserTrace "before parse attribute"
+  attributes <- try (many attribute) <|> return []
+  optional spaces
   char '>'
   return (tagName, attributes)
 
+
 attribute :: GenParser Char st Attribute
 attribute = do
+  spaces
   key <- many1 letter
   char '='
   value <- quotedText
+  spaces
   return (key, value)
 
 quotedText :: GenParser Char st String
@@ -34,13 +40,14 @@ closeTag :: GenParser Char st String
 closeTag = do
   string "</"
   content <- many (noneOf "<>")
+  spaces
   char '>'
   return content
 
 comment :: GenParser Char st String
 comment = do
-   string "<!--"
-   manyTill anyChar (try (string "-->"))
+  string "<!--"
+  manyTill anyChar (try (string "-->"))
 
 textNode :: GenParser Char st Node
 textNode = do
@@ -53,13 +60,14 @@ voidElement :: GenParser Char st Node
 voidElement = do
   char '<'
   tagName <- choice $ map (try . string) voidTags
-  attributes <- try (char ' ' >> sepBy attribute (char ' ')) <|> return []
+  spaces
+  attributes <- try (many attribute) <|> return []
+  spaces
   char '>'
   return $ Element tagName attributes []
 
-parseNode ::GenParser Char st Node
+parseNode :: GenParser Char st Node
 parseNode = do
-  parserTrace "parseNode"
   choice [try voidElement, try element, try (comment >> return (Text "")), textNode]
 
 element :: GenParser Char st Node
@@ -67,7 +75,7 @@ element = do
   (tag, attributes) <- openTag
   _ <- trace ("\n ===tag: " ++ tag ++ "===\n") (return ())
   nodes <- many parseNode
-  _ <- trace ("\n ===Node ("++ tag ++") Parsed: " ++ show nodes ++ "===\n") (return ())
+  _ <- trace ("\n ===Node (" ++ tag ++ ") Parsed: " ++ show nodes ++ "===\n") (return ())
   closingTag <- closeTag
   if tag == closingTag
     then return (Element tag attributes nodes)
