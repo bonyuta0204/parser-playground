@@ -30,8 +30,18 @@ testOpenTagMultiLine2 =
     ( do
         let input = "<script\n    type=\"text/javascript\"\n    async=\"\"\n    src=\"//test.js\"\n  ></script>"
         let result = parse openTag "" input
-        let exepected = Right ("script",[("type","text/javascript"),("async",""),("src","//test.js")])
+        let exepected = Right ("script", [("type", "text/javascript"), ("async", ""), ("src", "//test.js")])
         assertEqual "parse openTag" exepected result
+    )
+
+testVoidElement :: Test
+testVoidElement =
+  TestCase
+    ( do
+        let input = "<meta charset=\"utf-8\" />"
+        let result = parse voidElement "" input
+        let exepected = Right (Element "meta" [("charset","utf-8")] [])
+        assertEqual "parse voidTag" exepected result
     )
 
 testQuotedText :: Test
@@ -112,4 +122,4 @@ testWithComment =
     )
 
 htmlTests :: Test
-htmlTests = TestList [testOpenTag, testOpenTagMultiLine, testOpenTagMultiLine2, testQuotedText, testQuotedTextWithEscape, testElement1, testNested, testComment, testWithComment, testSingleTag, testNested2]
+htmlTests = TestList [testOpenTag, testOpenTagMultiLine, testOpenTagMultiLine2, testVoidElement, testQuotedText, testQuotedTextWithEscape, testElement1, testNested, testComment, testWithComment, testSingleTag, testNested2]

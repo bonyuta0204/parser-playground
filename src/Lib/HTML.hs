@@ -1,4 +1,4 @@
-module Lib.HTML (openTag, closeTag, element, quotedText, html, comment, Node (Element, Text)) where
+module Lib.HTML (openTag, closeTag, element, voidElement,quotedText, html, comment, Node (Element, Text)) where
 
 import Debug.Trace (trace)
 import Text.Parsec (parserTrace)
@@ -7,9 +7,8 @@ import Text.ParserCombinators.Parsec
 openTag :: GenParser Char st (String, [Attribute])
 openTag = do
   char '<'
-  tagName <- many1 letter
+  tagName <- many1 (letter <|> digit)
   spaces
-  parserTrace "before parse attribute"
   attributes <- try (many attribute) <|> return []
   optional spaces
   char '>'
@@ -19,7 +18,7 @@ openTag = do
 attribute :: GenParser Char st Attribute
 attribute = do
   spaces
-  key <- many1 letter
+  key <- many1 (letter <|> digit)
   char '='
   value <- quotedText
   spaces
@@ -39,7 +38,7 @@ escapeChar = do
 closeTag :: GenParser Char st String
 closeTag = do
   string "</"
-  content <- many (noneOf "<>")
+  content <- many (letter <|> digit)
   spaces
   char '>'
   return content
@@ -62,7 +61,7 @@ voidElement = do
   tagName <- choice $ map (try . string) voidTags
   spaces
   attributes <- try (many attribute) <|> return []
-  spaces
+  skipMany (space <|> char '/')
   char '>'
   return $ Element tagName attributes []
 
