@@ -1,6 +1,7 @@
 module Lib.HTML (openTag, closeTag, element, quotedText, html, comment, Node (Element, Text)) where
 
 import Text.ParserCombinators.Parsec
+import Text.Parsec (parserTrace)
 
 openTag :: GenParser Char st (String, [Attribute])
 openTag = do
@@ -36,7 +37,9 @@ closeTag = do
   return content
 
 comment :: GenParser Char st String
-comment = between (string "<!--") (string "-->") (many (noneOf "<!-"))
+comment = do
+   string "<!--"
+   manyTill anyChar (try (string "-->"))
 
 textNode :: GenParser Char st Node
 textNode = do
