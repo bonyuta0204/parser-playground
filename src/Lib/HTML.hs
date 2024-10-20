@@ -18,7 +18,7 @@ openTag = do
 attribute :: GenParser Char st Attribute
 attribute = do
   spaces
-  key <- many1 (letter <|> digit)
+  key <- many1 (noneOf "=<> /")
   char '='
   value <- quotedText
   spaces
@@ -50,7 +50,7 @@ comment = do
 
 textNode :: GenParser Char st Node
 textNode = do
-  text <- many1 (noneOf "<>")
+  text <- many1 (noneOf "<")
   return $ Text text
 
 voidTags = ["area", "base", "br", "col", "embed", "hr", "img", "input", "link", "meta", "param", "source", "track", "wbr"]
