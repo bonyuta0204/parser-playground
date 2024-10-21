@@ -26,6 +26,7 @@ source-repository head
 library
   exposed-modules:
       Lib
+      Lib.Calc
       Lib.CSV
       Lib.HTML
   other-modules:
@@ -61,6 +62,7 @@ test-suite parser-playground-test
   type: exitcode-stdio-1.0
   main-is: Spec.hs
   other-modules:
+      Lib.CalcTest
       Lib.HTMLTest
       Paths_parser_playground
   autogen-modules:
