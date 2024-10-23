@@ -10,7 +10,7 @@ testExpression1 =
     ( do
         let input = "3 + 4 * 5"
         let result = parse expression "" input
-        let exepected = Right (Sum (Val 3) (Mut (Val 4)  (Val 5)) )
+        let exepected = Right (Sum (Val 3) (Mul (Val 4)  (Val 5)) )
         assertEqual "expression" exepected result
     )
 

@@ -1,5 +1,5 @@
 
-module Lib.Calc (expression, Expression(Val, Sum, Mut))where
+module Lib.Calc (expression, Expression(Val, Sum, Mul))where
 import Text.ParserCombinators.Parsec
 
 val :: Parser Expression
@@ -8,32 +8,42 @@ val = do
     return $ Val (read num :: Int)
 
 
-parseSum :: Parser Expression
-parseSum = do
+termSum :: Parser Expression
+termSum = do
+    a <- termFactor
     spaces
-    a <- val
-    spaces
-    char '+'
-    spaces
-    b <- try parseMul <|> val
-    return (Sum a b)
+    rest a
+  where
+    rest left = (do
+        _ <- char '+'
+        spaces
+        b <- termFactor
+        spaces
+        rest $ Sum left b
+      ) <|> return left
 
 
-parseMul :: Parser Expression
-parseMul = do
+termFactor :: Parser Expression
+termFactor = do
     a <- val
     spaces
-    char '*'
-    spaces
-    Mut a <$> val
+    rest a
+  where
+    rest left = (do
+      _ <- char '*'
+      spaces
+      b <- val
+      rest $ Mul left b
+      ) <|> return left
+
 
 
 
 expression :: Parser Expression
-expression = try parseSum <|> try parseMul <|> val
+expression = spaces >> termSum
 
 
 
 
 
-data Expression = Val Int | Sum Expression Expression | Mut Expression Expression deriving(Show,Eq)
+data Expression = Val Int | Sum Expression Expression | Mul Expression Expression deriving(Show,Eq)
