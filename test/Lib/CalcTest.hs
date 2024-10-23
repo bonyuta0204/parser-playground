@@ -48,6 +48,39 @@ testExpression4 =
         assertEqual "expression 7 + 3 + 2" expected result
     )
 
+-- 引き算のテスト
+testSubtraction :: Test
+testSubtraction =
+  TestCase
+    ( do
+        let input = "10 - 3 - 2"
+        let result = parse expression "" input
+        let expected = Right (Sub (Sub (Val 10) (Val 3)) (Val 2))
+        assertEqual "expression 10 - 3 - 2" expected result
+    )
+
+-- 割り算のテスト
+testDivision :: Test
+testDivision =
+  TestCase
+    ( do
+        let input = "20 / 4 / 2"
+        let result = parse expression "" input
+        let expected = Right (Div (Div (Val 20) (Val 4)) (Val 2))
+        assertEqual "expression 20 / 4 / 2" expected result
+    )
+
+-- 複合的なテスト（加算、引き算、乗算、割り算を混ぜたもの）
+testComplexExpression :: Test
+testComplexExpression =
+  TestCase
+    ( do
+        let input = "3 + 6 / 2 - 1 * 4"
+        let result = parse expression "" input
+        let expected = Right (Sub (Sum (Val 3) (Div (Val 6) (Val 2))) (Mul (Val 1) (Val 4)))
+        assertEqual "expression 3 + 6 / 2 - 1 * 4" expected result
+    )
+
 -- 異常系のテスト（不正な文字列）
 testInvalidExpression :: Test
 testInvalidExpression =
@@ -82,4 +115,4 @@ testExpressionNoSpaces =
         assertEqual "expression 3+4*5" expected result
     )
 
-calcTests = TestList [testExpression1, testExpression2, testExpression3, testExpression4, testInvalidExpression, testExpression5, testExpressionNoSpaces]
+calcTests = TestList [testExpression1, testExpression2, testExpression3, testExpression4, testSubtraction, testDivision, testComplexExpression, testInvalidExpression, testExpression5, testExpressionNoSpaces]

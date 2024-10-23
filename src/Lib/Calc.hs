@@ -1,5 +1,5 @@
 
-module Lib.Calc (expression, Expression(Val, Sum, Mul))where
+module Lib.Calc (expression, Expression(Val, Sum, Mul,Sub,Div))where
 import Text.ParserCombinators.Parsec
 
 val :: Parser Expression
@@ -15,11 +15,14 @@ termSum = do
     rest a
   where
     rest left = (do
-        _ <- char '+'
+        s <- char '+' <|> char '-'
         spaces
         b <- termFactor
         spaces
-        rest $ Sum left b
+        rest $ case s of
+          '+' -> Sum left b
+          '-' -> Sub left b
+          _ -> b
       ) <|> return left
 
 
@@ -30,10 +33,13 @@ termFactor = do
     rest a
   where
     rest left = (do
-      _ <- char '*'
+      s <- char '*' <|> char '/'
       spaces
       b <- subExpression <|> val
-      rest $ Mul left b
+      rest $ case s of
+        '*' -> Mul left b
+        '/' -> Div left b
+        _ -> left
       ) <|> return left
 
 subExpression :: Parser Expression
@@ -54,4 +60,4 @@ expression = spaces >> termSum
 
 
 
-data Expression = Val Int | Sum Expression Expression | Mul Expression Expression deriving(Show,Eq)
+data Expression = Val Int | Sum Expression Expression | Sub Expression Expression | Mul Expression Expression | Div Expression Expression deriving(Show,Eq)
