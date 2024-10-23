@@ -25,16 +25,24 @@ termSum = do
 
 termFactor :: Parser Expression
 termFactor = do
-    a <- val
+    a <- subExpression <|> val
     spaces
     rest a
   where
     rest left = (do
       _ <- char '*'
       spaces
-      b <- val
+      b <- subExpression <|> val
       rest $ Mul left b
       ) <|> return left
+
+subExpression :: Parser Expression
+subExpression = do
+  char '('
+  e <- expression
+  char ')'
+  return e
+
 
 
 

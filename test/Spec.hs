@@ -4,7 +4,7 @@ import Lib.CalcTest (calcTests)
 
 
 main :: IO Counts
-main = runTestTT $ TestList [calcTests]
+main = runTestTT $ TestList [htmlTests, calcTests]
 
 
 
