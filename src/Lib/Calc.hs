@@ -62,9 +62,45 @@ eval e = case e of
   Mul x y -> eval x * eval y
   Div x y -> eval x `div` eval y
 
+evalQ :: Expression -> MyRational
+evalQ e = case e of
+  Val x -> Q x 1
+  Sum x y -> evalQ x + evalQ y
+  Sub x y -> evalQ x - evalQ y
+  Mul x y -> evalQ x * evalQ y
+  Div x y -> evalQ x `qdiv` evalQ y
+
 calculator :: String -> Either ParseError Int
 calculator x = do
   e <- parse expression "(calc)" x
   return $ eval e
 
+calculatorQ :: String -> Either ParseError MyRational
+calculatorQ x = do
+  e <- parse expression "(calc)" x
+  return $ evalQ e
+
 data Expression = Val Int | Sum Expression Expression | Sub Expression Expression | Mul Expression Expression | Div Expression Expression deriving (Show, Eq)
+
+data MyRational = Q Int Int deriving (Eq, Show)
+
+instance Num MyRational where
+  Q x1 y1 + Q x2 y2 = Q (x1 * s1 + x2 * s2) (g * s1 * s2)
+    where
+      g = myGCD y1 y2
+      s1 = y2 `div` g
+      s2 = y1 `div` g
+
+qdiv (Q x1 y1) (Q x2 y2) = Q (x1 * y2) (x2 * y1)
+
+-- x = 12
+-- y = 18
+myGCD :: Int -> Int -> Int
+myGCD x y = case q of
+  0 -> r
+  _ -> myGCD q r
+  where
+    (q, r) =
+      if x > y
+        then (x `mod` y, y)
+        else (y `mod` x, x)
