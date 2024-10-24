@@ -103,6 +103,7 @@ calculatorQ input = do
 instance Num MyRational where
   Q n1 d1 + Q n2 d2 = Q (n1 * d2 + n2 * d1) (d1 * d2)
   Q n1 d1 * Q n2 d2 = Q (n1 * n2) (d1 * d2)
+  negate (Q n1 d1) = Q (negate n1) d1
 
 -- 分数の除算
 qdiv :: MyRational -> MyRational -> MyRational

@@ -29,6 +29,7 @@ library
       Lib.Calc
       Lib.CSV
       Lib.HTML
+      Lib.Schema
   other-modules:
       Paths_parser_playground
   autogen-modules:
