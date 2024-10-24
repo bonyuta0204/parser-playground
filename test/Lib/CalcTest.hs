@@ -90,8 +90,9 @@ testInvalidExpression =
         let result = parse expression "" input
         assertBool "invalid expression 3 + + 4" (isLeft result)
     )
-    where isLeft (Left _) = True
-          isLeft _ = False
+  where
+    isLeft (Left _) = True
+    isLeft _ = False
 
 -- 複数の括弧がある式
 testExpression5 :: Test

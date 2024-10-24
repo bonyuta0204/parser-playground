@@ -40,7 +40,7 @@ testVoidElement =
     ( do
         let input = "<meta charset=\"utf-8\" />"
         let result = parse voidElement "" input
-        let exepected = Right (Element "meta" [("charset","utf-8")] [])
+        let exepected = Right (Element "meta" [("charset", "utf-8")] [])
         assertEqual "parse voidTag" exepected result
     )
 

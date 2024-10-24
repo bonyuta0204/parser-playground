@@ -1,7 +1,6 @@
-module Lib.HTML (openTag, closeTag, element, voidElement,quotedText, html, comment, Node (Element, Text)) where
+module Lib.HTML (openTag, closeTag, element, voidElement, quotedText, html, comment, Node (Element, Text)) where
 
 import Debug.Trace (trace)
-import Text.Parsec (parserTrace)
 import Text.ParserCombinators.Parsec
 
 openTag :: GenParser Char st (String, [Attribute])
@@ -13,7 +12,6 @@ openTag = do
   optional spaces
   char '>'
   return (tagName, attributes)
-
 
 attribute :: GenParser Char st Attribute
 attribute = do
